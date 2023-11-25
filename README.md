@@ -1,4 +1,4 @@
-# ReadMe - Final Project Proposals
+# ReadMe - The Final Project: Proposals
 
 ▶️▶️ **PROPOSAL 1** ◀️◀️
 
@@ -20,4 +20,4 @@ I'm not sure if I'd even be able to use 10 buttons, but for the sake of an examp
 <p align = "center">
 <img src = "./Proposal2.jpg" width = 90%>
 <br>
-Figure 1: Proposal 2 - Idea Illustration </p>
+Figure 2: Proposal 2 - Idea Illustration </p>
