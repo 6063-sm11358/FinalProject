@@ -1,4 +1,4 @@
-# ReadMe - The Final Project: Proposals
+# ReadMe - Final Project: Proposals
 
 ▶️▶️ **PROPOSAL 1** ◀️◀️
 
@@ -21,3 +21,12 @@ I'm not sure if I'd even be able to use 10 buttons, but for the sake of an examp
 <img src = "./Proposal2.jpg" width = 90%>
 <br>
 Figure 2: Proposal 2 - Idea Illustration </p>
+
+➡️➡️ **PROPOSAL 3** ⬅️⬅️
+
+My third idea is to code a music visualizer using both screen-based elements, and LEDs on the Arduino. I am thinking of using FFTs to segregate sound frequencies into lows, mids, highs and then have them routed to multiple LEDs on an Arduino. One can think of this project as a scaled-down version of "stage lighting". A music visualizer coded in p5.js wherein the user can choose from several music options, and have both the virtual and physcial visualizers reflect that on-the-fly.
+
+<p align = "center">
+<img src = "./Proposal3.jpg" width = 90%>
+<br>
+Figure 3: Proposal 3 - Idea Illustration </p>
