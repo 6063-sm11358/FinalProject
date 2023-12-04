@@ -2,13 +2,15 @@
 
 ▶️▶️ ***Finalized Proposal:***
 
-I've finalized to pursue my third proposal for this project: an Arduino & p5.js-based music visualizer. To provide a refresher, the idea involves using *Fast Fourier Transforms (FFTs)* to segregate frequencies of a given music sample into lows, mids, and highs. I then aim to pass off this information over to Arduino, wherein different LEDs would light up depending on the music "bands", in order to simulate a physical sound pattern.
+I've finalized to pursue my third proposal for this project: **an Arduino & p5.js-based music visualizer.** To provide a refresher, the idea involves using *Fast Fourier Transforms (FFTs)* to segregate frequencies of a given music sample into lows, mids, and highs. I then aim to pass off this information over to Arduino, wherein different LEDs would light up depending on the music "bands", in order to simulate a physical sound pattern.
 
 This project encompasses both, virtual on-screen and physical computing interactivity aspects. Based on my current plans, I think the input interfaces would be both p5 and Arduino, and the same is true for output interfaces as well. The p5-based input would be the sound files, on-screen buttons to control the media player whereas the Arduino-based input would be a *potentiometer* and maybe a *button*, potentially (hehe). The p5-based output would consist of a sound visualizer and, obviously, music through the speakers, while the Arduino-based output would be the LEDs lighting up.
 
 ▶️▶️ ***Components To Be Utilized:***
 
 Just to gather everything up, I presently aim to include components like: Arduino, LEDs (haven't finalized how many though), potentiometer, and button (might/might not be more than 1).
+
+I'm thinking of using the potentiometer as a physical interface for controlling the volume of the music. I know there's a function called *setVolume()* as part of the *p5.Sound* library, so I could code a DOM-slider and have it change the volume, but the slider seek would be controlled using the potentiometer, and not the mouse. Similarly, for the button, I was thinking that I could have the play/pause functionality mapped to the button press; simulate a media player with physical interactions, maybe.
 
 ▶️▶️ ***External Library Usage:***
 
@@ -19,7 +21,7 @@ The communication process b/w both the hardware and software interfaces would be
 <br>
 Figure 2.1: Initial Circuit Diagram of the Project </p>
 
-The above circuit diagram is the one that shows what all components I intend to use for implementing my project. This diagram **will** change when the whole project has been actualized, and I shall provide a new one with *all* components in either the Milestone 2 or Milestone 3 section.
+The above circuit diagram shows what all components I intend to use for implementing my project. This diagram ***will*** change once the whole project has been actualized, and I shall provide a new one with *all* components in either the Milestone 2 or Milestone 3 section.
 
 ▶️▶️ ***Potential Users:***
 
