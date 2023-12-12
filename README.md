@@ -1,3 +1,76 @@
+# Final Project: Milestone 2
+
+With this milestone, a majority of my project has been properly actualized. The Arduino-based LED music visualizer utilizes 10 LEDs, where 2 LEDs each have been mapped to a specific audio band.
+
+<p align = "center">
+<img src = "./M2_MainCircuit_SideView.jpg">
+<br>
+Figure 3.1: Actual Circuit - Side View
+<br>
+<br>
+<img src = "./M2_MainCircuit_TopView.jpg">
+<br>
+Figure 3.2: Actual Circuit - Top View
+<br>
+<br>
+<img src = "./CircuitDiagram_M2.JPG">
+<br>
+Figure 3.3: Updated Circuit Diagram </p>
+
+For my sound sample, I've conducted an FFT (Fast Fourier Transform), and have segregated my sample into 5 different bands: *bass*, *lowMid*, *mid*, *highMid*, and *treble*.
+
+```
+projectSound_FFT.analyze();
+
+//segregating audio frequencies based on bands
+bassEQ = projectSound_FFT.getEnergy('bass');
+lowMidEQ = projectSound_FFT.getEnergy('lowMid');
+midEQ = projectSound_FFT.getEnergy('mid');
+highMidEQ = projectSound_FFT.getEnergy('highMid');
+trebleEQ = projectSound_FFT.getEnergy('treble');
+```
+
+I'm using a *serial connection* for Arduino and p5 to communicate with each other. The FFT-bands give off values in the range of 0 to 255. Based on this, I've come up with certain thresholds for each band that, I feel, have the perfect balance in lighting up the LEDs. Having the number too less makes the LED stay on constantly, whereas having the number too high, makes the LED turn on intermittently. I'd be tweaking these values a little till the final milestone, in order to eke out the perfect combination and performance.
+
+Depending on these thresholds, I'm writing a single byte to the serial connection. I've used alphabets for denoting these threshold combinations, so like, **B** is *bass*, **M** is *mid*, **T** is *treble*, and so on.
+
+```
+if(bassEQ>=240)
+{
+  serialConnect.write('B');
+}
+if(midEQ>=175)
+{
+  serialConnect.write('M');
+}
+if(trebleEQ>=155)
+{
+  serialConnect.write('T');
+}
+```
+
+Depending on whatever letter combination p5 throws out, I've coded in the workings for each LED accordingly in Arduino.
+
+Subsequently, for the on-screen visualizer, I'm mapping the values or the "energies" received to ascertain the radii of the circles that correspond to each single band. I've color-coded my LEDs, so *bass* is red, *lowMid* is yellow, *mid* is green, *highMid* is blue, and *treble* is white. The same combination applies to the on-screen visualizer, composed out of circles, as well.
+
+```
+//mapping frequency values for on-screen visualizer
+bassEQ_viz = map(bassEQ, 0, 255, 0, height);
+lowMidEQ_viz = map(lowMidEQ, 0, 255, 0, height);
+midEQ_viz = map(midEQ, 0, 255, 0, width);
+highMidEQ_viz = map(highMidEQ, 0, 255, 0, height);
+trebleEQ_viz = map(trebleEQ, 0, 255, 0, width);
+```
+
+<p align = "center">
+<img src = "./M2_OnScreen_Visualizer.png">
+<br>
+Figure 3.4: On-Screen Music Visualizer (not the final design)
+
+At the moment, this on-screen visualizer is **not** the version that I intend on having for the final presentation. The design and the functionality *will* change. Moreover, I'm reworking my idea to include a *potentiometer* to the circuit. Having it change the volume of the audio sample just wasn't cutting it for me.
+
+Additionally, I have some pseudo-code in my sketch file that corresponds to a class for buttons. The final on-screen would resemble a media player, so the buttons for play/pause/stop would be using a class structure. Similarly, as mentioned, the visualizer would also be changing.
+
 # Final Project: Milestone 1
 
 ▶️▶️ ***Finalized Proposal:***
