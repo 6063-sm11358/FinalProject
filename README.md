@@ -69,7 +69,7 @@ Figure 3.4: On-Screen Music Visualizer (not the final design)
 
 At the moment, this on-screen visualizer is **not** the version that I intend on having for the final presentation. The design and the functionality *will* change. Moreover, I'm reworking my idea to include a *potentiometer* to the circuit. Having it change the volume of the audio sample just wasn't cutting it for me.
 
-Additionally, I have some pseudo-code in my sketch file that corresponds to a class for buttons. The final on-screen would resemble a media player, so the buttons for play/pause/stop would be using a class structure. Similarly, as mentioned, the visualizer would also be changing.
+Additionally, I have some pseudo-code in my sketch file that corresponds to a *class* for buttons. The final on-screen experience would resemble a media player, so the buttons for play/pause/stop functionalities would be getting initialized through class objects. Furthermore, as mentioned, the visualizer would also be changing.
 
 # Final Project: Milestone 1
 
