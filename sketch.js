@@ -5,6 +5,7 @@ let readyToReceive;
 
 let projectSound;
 let playButton;
+let stopButton;
 
 //initializing FFT-related variables
 let projectSound_FFT;
@@ -24,10 +25,10 @@ let trebleEQ_viz;
 //variable to detect whether audio is playing or not
 let soundActive = 0;
 
-//pre-loading project media files
+//pre-loading project multimedia files
 function preload()
 {
-  projectSound = loadSound("./Right In.mp3");
+  projectSound = loadSound("./Ruffneck.mp3");
 }
 
 function receiveSerial()
@@ -53,14 +54,47 @@ function connectToSerial()
   {
     serialConnect.open(9600);
     readyToReceive = true;
-    connectButton.hide();
+    connectButton.buttonVisibility(0);
   }
 }
 
-//class button
-// {
-//   class initialization for generating media-player buttons like play/pause/stop
-// }
+//class instance for creating media-player buttons
+class projectButtons
+{
+  constructor(_buttonName, _xPosButton, _yPosButton, _clickFunction, _visibleFlag)
+  {
+    this.button = createButton(_buttonName);
+    this.button.position(_xPosButton, _yPosButton);
+    this.button.style("width", width/12+"px");
+    this.button.style("height", width/30+"px");
+    this.button.style("border-radius", "10px");
+    this.button.mouseClicked(_clickFunction);
+    
+    if(_visibleFlag==0)
+    {
+      this.button.hide();
+    }
+    else
+    {
+      this.button.show();
+    }
+  }
+  changeButtonName(_newName)
+  {
+    this.button.html(_newName);
+  }
+  buttonVisibility(_visibleFlag)
+  {
+    if(_visibleFlag==1)
+    {
+      this.button.show();
+    }
+    else
+    {
+      this.button.hide();
+    }
+  }
+}
 
 function setup()
 {
@@ -72,14 +106,8 @@ function setup()
   readyToReceive = false;
   serialConnect = createSerial();
 
-  connectButton = createButton("Initiate Connection");
-  connectButton.position(width/2-50, height/2);
-  connectButton.mouseClicked(connectToSerial);
-
-  playButton = createButton("Play Sound");
-  playButton.position(width/2-50, height/2);
-  playButton.mouseClicked(playAudio);
-  playButton.hide();
+  connectButton = new projectButtons('INITIATE', width/2-50, height/2, connectToSerial, 1);
+  playButton = new projectButtons('PLAY', width/2-50, height/2, playAudio, 0);
 }
 
 function draw()
@@ -88,7 +116,7 @@ function draw()
 
   if(readyToReceive)
   {
-    playButton.show();
+    playButton.buttonVisibility(1);
     projectSound_FFT.analyze();
 
     //segregating audio frequencies based on bands
@@ -105,30 +133,90 @@ function draw()
     highMidEQ_viz = map(highMidEQ, 0, 255, 0, height);
     trebleEQ_viz = map(trebleEQ, 0, 255, 0, width);
 
-    noFill();
-    strokeWeight(2);
+    //generating visualizer
+    if(soundActive==1)
+    {
+      noStroke();
+      
+      //bass ellipses - red
+      fill(255,0,0);
+      if(bassEQ>=240)
+      {
+        for(let i=0; i<200; i++)
+        {
+          ellipse(random(0,width), random(0,height), 30);
+        }
+      }
+      
+      //lowMid ellipses - yellow
+      fill(0);
+      drawingContext.save();
+        ellipse(width/2, height/2, 1300);
+        fill(255,255,0);
+        drawingContext.clip();
+        if(lowMidEQ>=200)
+        {
+          for(let i=0; i<200; i++)
+          {
+            ellipse(random(0,width), random(0,height), 30);
+          }
+        }
+      drawingContext.restore();
+      
+      //mid ellipses - green
+      fill(0);
+      drawingContext.save();
+        ellipse(width/2, height/2, 1000);
+        fill(0,255,0);
+        drawingContext.clip();
+        if(midEQ>=175)
+        {
+          for(let i=0; i<200; i++)
+          {
+            ellipse(random(0,width), random(0,height), 30);
+          }
+        }
+      drawingContext.restore();
 
-    //generating ellipses for each audio band (visualizer to be upgraded)
-    stroke(255,0,0);
-    ellipse(width/2, height/2, bassEQ_viz);
-    stroke(255,255,0);
-    ellipse(width/2, height/2, lowMidEQ_viz);
-    stroke(0,255,0);
-    ellipse(width/2, height/2, midEQ_viz);
-    stroke(0,0,255);
-    ellipse(width/2, height/2, highMidEQ_viz);
-    stroke(255,255,255);
-    ellipse(width/2, height/2, trebleEQ_viz);
+      //highMid ellipses - blue
+      fill(0);
+      drawingContext.save();
+        ellipse(width/2, height/2, 700);
+        fill(0,0,255);
+        drawingContext.clip();
+        if(highMidEQ>=160)
+        {
+          for(let i=0; i<200; i++)
+          {
+            ellipse(random(0,width), random(0,height), 30);
+          }
+        }
+      drawingContext.restore();
+
+      //treble ellipses - white
+      fill(0);
+      drawingContext.save();
+        ellipse(width/2, height/2, 400);
+        fill(255);
+        drawingContext.clip();
+        if(trebleEQ>=155)
+        {
+          for(let i=0; i<200; i++)
+          {
+            ellipse(random(0,width), random(0,height), 30);
+          }
+        }
+      drawingContext.restore();
+    }
   }
 
   if(serialConnect.opened() && readyToReceive)
   {
     serialConnect.clear();
 
-    //sending communication to Arduino (will find more elegant solution than multiple 'ifs')
+    //sending communication to Arduino
     if(soundActive==1)
     {
-      print(midEQ);
       if(bassEQ>=240)
       {
         serialConnect.write('B');
@@ -182,17 +270,19 @@ function draw()
   }
 }
 
-//function to activate audio
+//function to play/pause audio
 function playAudio()
 {
   if(projectSound.isPlaying())
   {
     projectSound.pause();
+    playButton.changeButtonName("PLAY");
     soundActive = 0;
   }
   else
   {
     projectSound.play();
+    playButton.changeButtonName("PAUSE");
     soundActive = 1;
   }
 }
