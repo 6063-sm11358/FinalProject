@@ -3,6 +3,9 @@ let serialConnect;
 let connectButton;
 let readyToReceive;
 
+let projectSound;
+let projectFont;
+
 //initializing FFT-related variables
 let projectSound_FFT;
 let bassEQ;
@@ -19,13 +22,13 @@ let lowMidEQ_viz;
 let trebleEQ_viz;
 
 //variable to detect whether audio is playing or not
-let projectSound;
 let soundActive = 0;
 
 //pre-loading project multimedia files
 function preload()
 {
-  projectSound = loadSound("./Equinox.mp3");
+  projectSound = loadSound("./Bonfire.mp3");
+  projectFont = loadFont("./Gugi.ttf");
 }
 
 function receiveSerial()
@@ -102,16 +105,26 @@ function setup()
 
   readyToReceive = false;
   serialConnect = createSerial();
-
-  connectButton = new projectButtons('INITIATE', width/2-50, height/2, connectToSerial, 1);
+  connectButton = new projectButtons('INITIATE', width/2-60, height/1.75, connectToSerial, 1);
 }
 
 function draw()
 {
   background(0);
 
+  //generating main text
+  textAlign(CENTER,CENTER);
+  textSize(50);
+  textFont(projectFont);
+  noStroke();
+  fill(255);
+  text("the music visualizer", width/2, height/2.05);
+
   if(readyToReceive)
   {
+    textSize(18);
+    fill(0,255,0);
+    text("press [space] to play/pause audio", width/2, height/1.83);
     projectSound_FFT.analyze();
 
     // segregating audio frequencies based on bands
@@ -120,8 +133,6 @@ function draw()
     midEQ = projectSound_FFT.getEnergy('mid');
     highMidEQ = projectSound_FFT.getEnergy('highMid');
     trebleEQ = projectSound_FFT.getEnergy('treble');
-
-    print(trebleEQ);
 
     //mapping frequency values for on-screen visualizer
     bassEQ_viz = map(bassEQ, 0, 255, 0, height);
@@ -137,7 +148,7 @@ function draw()
       
       //bass ellipses - red
       fill(255,0,0);
-      if(bassEQ>=240)
+      if(bassEQ>=245)
       {
         vizGenerator();
       }
@@ -160,7 +171,7 @@ function draw()
         ellipse(width/2, height/2, 1000);
         fill(0,255,0);
         drawingContext.clip();
-        if(midEQ>=180)
+        if(midEQ>=188)
         {
           vizGenerator();
         }
@@ -172,7 +183,7 @@ function draw()
         ellipse(width/2, height/2, 700);
         fill(0,0,255);
         drawingContext.clip();
-        if(highMidEQ>=165)
+        if(highMidEQ>=160)
         {
           vizGenerator();
         }
@@ -184,7 +195,7 @@ function draw()
         ellipse(width/2, height/2, 400);
         fill(255);
         drawingContext.clip();
-        if(trebleEQ>=155)
+        if(trebleEQ>=170)
         {
           vizGenerator();
         }
@@ -199,11 +210,11 @@ function draw()
     //sending communication to Arduino
     if(soundActive==1)
     {
-      if(bassEQ>=240)
+      if(bassEQ>=245)
       {
         serialConnect.write('B');
       }
-      if(bassEQ<240)
+      if(bassEQ<245)
       {
         serialConnect.write('A'); 
       }
@@ -215,27 +226,41 @@ function draw()
       {
         serialConnect.write('K');
       }
-      if(midEQ>=180)
+      if(midEQ>=188)
       {
         serialConnect.write('M');
       }
-      if(midEQ<180)
+      if(midEQ<188)
       {
         serialConnect.write('N'); 
       }
-      if(highMidEQ>=165)
+      if(projectSound.currentTime()>=55.26 && projectSound.currentTime()<121.48)
       {
-        serialConnect.write('H');
+        if(highMidEQ>=185)
+        {
+          serialConnect.write('H');
+        }
+        else
+        {
+          serialConnect.write('I'); 
+        }
       }
-      if(highMidEQ<165)
+      if(projectSound.currentTime()<55.26 || projectSound.currentTime()>=121.48)
       {
+        if(highMidEQ>=160)
+        {
+          serialConnect.write('H');
+        }
+        else
+        {
         serialConnect.write('I'); 
+        }
       }      
-      if(trebleEQ>=155)
+      if(trebleEQ>=170)
       {
         serialConnect.write('T');
       }
-      if(trebleEQ<155)
+      if(trebleEQ<170)
       {
         serialConnect.write('U'); 
       }
@@ -257,27 +282,37 @@ function vizGenerator()
 {
   for(let i=0; i<350; i++)
   {
-    ellipse(random(0,width), random(0,height), 20);
+    ellipse(random(0,width), random(0,height), 30);
   }
 }
 
-//function to play/pause audio
+//function to play/pause/stop audio
 function keyTyped()
 {
   if(projectSound.isPlaying())
   {
-    if(key == 'p')
+    if(keyCode == 32) //keyCode = 32 is Spacebar
     {
       projectSound.pause();
+      soundActive = 0;
+    }
+    else if(keyCode == 83) //keyCode = 83 is 's' key
+    {
+      projectSound.stop();
       soundActive = 0;
     }
   }
   else
   {
-    if(key == 'p')
+    if(keyCode == 32 && readyToReceive)
     {
       projectSound.play();
       soundActive = 1;
+    }
+    else if(keyCode == 83)
+    {
+      projectSound.stop();
+      soundActive = 0;
     }
   }
 }
