@@ -3,10 +3,6 @@ let serialConnect;
 let connectButton;
 let readyToReceive;
 
-let projectSound;
-let playButton;
-let stopButton;
-
 //initializing FFT-related variables
 let projectSound_FFT;
 let bassEQ;
@@ -23,12 +19,13 @@ let lowMidEQ_viz;
 let trebleEQ_viz;
 
 //variable to detect whether audio is playing or not
+let projectSound;
 let soundActive = 0;
 
 //pre-loading project multimedia files
 function preload()
 {
-  projectSound = loadSound("./Ruffneck.mp3");
+  projectSound = loadSound("./Equinox.mp3");
 }
 
 function receiveSerial()
@@ -107,7 +104,6 @@ function setup()
   serialConnect = createSerial();
 
   connectButton = new projectButtons('INITIATE', width/2-50, height/2, connectToSerial, 1);
-  playButton = new projectButtons('PLAY', width/2-50, height/2, playAudio, 0);
 }
 
 function draw()
@@ -116,15 +112,16 @@ function draw()
 
   if(readyToReceive)
   {
-    playButton.buttonVisibility(1);
     projectSound_FFT.analyze();
 
-    //segregating audio frequencies based on bands
+    // segregating audio frequencies based on bands
     bassEQ = projectSound_FFT.getEnergy('bass');
     lowMidEQ = projectSound_FFT.getEnergy('lowMid');
     midEQ = projectSound_FFT.getEnergy('mid');
     highMidEQ = projectSound_FFT.getEnergy('highMid');
     trebleEQ = projectSound_FFT.getEnergy('treble');
+
+    print(trebleEQ);
 
     //mapping frequency values for on-screen visualizer
     bassEQ_viz = map(bassEQ, 0, 255, 0, height);
@@ -142,10 +139,7 @@ function draw()
       fill(255,0,0);
       if(bassEQ>=240)
       {
-        for(let i=0; i<200; i++)
-        {
-          ellipse(random(0,width), random(0,height), 30);
-        }
+        vizGenerator();
       }
       
       //lowMid ellipses - yellow
@@ -154,12 +148,9 @@ function draw()
         ellipse(width/2, height/2, 1300);
         fill(255,255,0);
         drawingContext.clip();
-        if(lowMidEQ>=200)
+        if(lowMidEQ>=210)
         {
-          for(let i=0; i<200; i++)
-          {
-            ellipse(random(0,width), random(0,height), 30);
-          }
+          vizGenerator();
         }
       drawingContext.restore();
       
@@ -169,12 +160,9 @@ function draw()
         ellipse(width/2, height/2, 1000);
         fill(0,255,0);
         drawingContext.clip();
-        if(midEQ>=175)
+        if(midEQ>=180)
         {
-          for(let i=0; i<200; i++)
-          {
-            ellipse(random(0,width), random(0,height), 30);
-          }
+          vizGenerator();
         }
       drawingContext.restore();
 
@@ -184,12 +172,9 @@ function draw()
         ellipse(width/2, height/2, 700);
         fill(0,0,255);
         drawingContext.clip();
-        if(highMidEQ>=160)
+        if(highMidEQ>=165)
         {
-          for(let i=0; i<200; i++)
-          {
-            ellipse(random(0,width), random(0,height), 30);
-          }
+          vizGenerator();
         }
       drawingContext.restore();
 
@@ -201,10 +186,7 @@ function draw()
         drawingContext.clip();
         if(trebleEQ>=155)
         {
-          for(let i=0; i<200; i++)
-          {
-            ellipse(random(0,width), random(0,height), 30);
-          }
+          vizGenerator();
         }
       drawingContext.restore();
     }
@@ -225,27 +207,27 @@ function draw()
       {
         serialConnect.write('A'); 
       }
-      if(lowMidEQ>=200)
+      if(lowMidEQ>=210)
       {
         serialConnect.write('L');
       }
-      if(lowMidEQ<200)
+      if(lowMidEQ<210)
       {
         serialConnect.write('K');
       }
-      if(midEQ>=175)
+      if(midEQ>=180)
       {
         serialConnect.write('M');
       }
-      if(midEQ<175)
+      if(midEQ<180)
       {
         serialConnect.write('N'); 
       }
-      if(highMidEQ>=160)
+      if(highMidEQ>=165)
       {
         serialConnect.write('H');
       }
-      if(highMidEQ<160)
+      if(highMidEQ<165)
       {
         serialConnect.write('I'); 
       }      
@@ -270,19 +252,32 @@ function draw()
   }
 }
 
+//function to generate the circles-based visualizer
+function vizGenerator()
+{
+  for(let i=0; i<350; i++)
+  {
+    ellipse(random(0,width), random(0,height), 20);
+  }
+}
+
 //function to play/pause audio
-function playAudio()
+function keyTyped()
 {
   if(projectSound.isPlaying())
   {
-    projectSound.pause();
-    playButton.changeButtonName("PLAY");
-    soundActive = 0;
+    if(key == 'p')
+    {
+      projectSound.pause();
+      soundActive = 0;
+    }
   }
   else
   {
-    projectSound.play();
-    playButton.changeButtonName("PAUSE");
-    soundActive = 1;
+    if(key == 'p')
+    {
+      projectSound.play();
+      soundActive = 1;
+    }
   }
 }
