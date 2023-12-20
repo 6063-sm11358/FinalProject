@@ -1,3 +1,110 @@
+# Final Project: Milestone 3
+
+My final project is an **Arduino & p5.js-based music visualizer.** To provide a refresher, the idea involves using *Fast Fourier Transforms (FFTs)* to segregate frequencies of a given music sample into lows, mids, and highs. I then pass off this information over to Arduino, wherein different LEDs light up depending on the music "bands", in order to simulate a physical sound pattern.
+
+I'm using a *serial connection* for Arduino and p5 to communicate with each other. The FFT-bands give off values in the range of 0 to 255. Based on this, I've come up with certain thresholds for each band that, I feel, have the perfect balance in lighting up the LEDs.
+
+My final circuit uses a combination of 20 LEDs, each mapped to a specific music band. There are 5 music bands in total, with each being mapped to 4 LEDs. So *red* is *bass*, *yellow* is *lowMid*, *green* is *mid*, *blue* is *highMid*, and *white* is *treble*.
+
+Depending on these thresholds, I'm writing a single byte to the serial connection. I've used alphabets for denoting these threshold combinations, so like, **B** is *bass*, **M** is *mid*, **T** is *treble*, and so on.
+
+<p align = "center">
+<img src = "./CircuitDiagram_M3.JPG">
+<br>
+Figure 4.1: Final Circuit Diagram
+<br>
+<br>
+<img src = "./M3_MainCircuit_Side1.jpg">
+<br>
+Figure 4.2: Left-side view of the actual circuit
+<br>
+<br>
+<img src = "./M3_MainCircuit_Side2.jpg">
+<br>
+Figure 4.3: Right-side view of the actual circuit </p>
+
+Subsequently, for the on-screen visualizer, I've created several concentric circles with the same color-coding as the physical LEDs to denote the bands. These bands also light up depending on the threshold values that I set up previously.
+
+<p align = "center">
+<img src = "./M3_OnScreen_Visualizer1.png">
+<br>
+Figure 4.4: On-Screen Visualizer: Screenshot 1
+<br>
+<br>
+<img src = "./M3_OnScreen_Visualizer2.png">
+<br>
+Figure 4.5: On-Screen Visualizer: Screenshot 2 </p>
+
+I wanted to depict each band to be visually distinct from one another, so I've coded in a functionality that implements the concept of a "clipping mask". Each concentric circle has tiny, randomly-generated circles "clipped" inside.
+
+I've utilized the *drawingContext* feature of the native HTML5 Canvas functionality to achieve this effect.
+
+```
+drawingContext.save();
+  ellipse(width/2, height/2, 1300);
+  fill(255,255,0);
+  drawingContext.clip();
+  if(lowMidEQ>=210)
+  {
+    vizGenerator();
+  }
+drawingContext.restore();
+```
+
+Furthermore, I've created a custom function *vizGenerator()* that's responsible for randomly creating all the ellipses that one can see inside the concentric circles. I've given them the fills (colors) accordingly to whichever audio band they belong to.
+
+```
+//function to generate the circles-based visualizer
+function vizGenerator()
+{
+  for(let i=0; i<350; i++)
+  {
+    ellipse(random(0,width), random(0,height), 30);
+  }
+}
+```
+
+The updated functionalities of the project follows:
+
+▶️▶️ ***Components Utilized:***
+
+I'm using Arduino Nano, 20 LEDs, and 2 100Ω resistors. On the p5-end, I've made use of the *keyTyped()* function to control audio playback. *Spacebar* is being used for play/pause functionality, whereas the key "s" is being used for stopping the song, and resetting its position.
+
+▶️▶️ ***External Library Usage:***
+
+The communication process b/w both the hardware and software interfaces is being handled by a *serial connection*. To enable this, I've made use of the *p5.webSerial* library. Additionally, as my project revolves around using FFTs, I'm also utilizing the *p5.Sound* library.
+
+▶️▶️ ***User-Testing Process:***
+
+As was the case with every other Creative Coding assignment or the Mid-Term Project, my roommate's laptop has always been the "guinea pig" for the UAT process. Since the code's hosted on GitHub, it's pretty easy & straightforward to execute it on any system. Moreover, my roommate has a Mac, so this whole process helps me in assessing compatibility with both OSes, Mac & Windows.
+
+For this project, I conducted numerous A/B tests with several people about whichever song was best suited for this, and had an overall "great vibe". I might have went through at least 15 different songs before I finalized the one that is being used.
+
+Similarly, I also sought feedback on the number of LEDs to put on the breadboard. I had started off with just 5 LEDs on one side, but later increased that to 10 (2 LEDs mapped to the same audio band, and digital pin on the Arduino board). The final rendition has 20 LEDs, with 4 LEDs mapped to a single audio band. The new configuration has rows of 10 LEDs on either side of the breadboard. The user feedback was also positive with people finding it more immersive and "full".
+
+▶️▶️ ***Challenges Faced:***
+
+Because of the quantity of LEDs I ended up using, the actual circuit design got a bit constricting, with way too many wires on the board. The other big challenge I faced was to tweak the FFT parameters to suit the song. It took a while to have it sync with the song, and making sure that all LEDs did "justice".
+
+▶️▶️ ***Project Relevancy:***
+
+My music playlists generally tend to revolve around the world of EDM (Electronic Dance Music). I've always wanted to experience a concert in-person, but unfortunately, I haven't gotten a chance yet. Hence, with this project, I kind-of wanted to replicate that "music concert vibe" at home. I think the sole reason for me to delve into this project was to have some enjoyment and calm, which at least for me, this project has delivered. And well, why not share this with others as well 🤷‍♂️
+
+<p align = "center">
+<img src = "./M3_MainCircuit_Active1.jpg">
+<br>
+Figure 4.6: Arduino-based Music Visualizer: In-Action 1
+<br>
+<br>
+<img src = "./M3_MainCircuit_Active2.jpg">
+<br>
+Figure 4.7: Arduino-based Music Visualizer: In-Action 2
+<br>
+<br>
+<img src = "./M3_MainCircuit_Active3.jpg">
+<br>
+Figure 4.8: Arduino-based Music Visualizer: In-Action 3 </p>
+
 # Final Project: Milestone 2
 
 With this milestone, a majority of my project has been properly actualized. The Arduino-based LED music visualizer utilizes 10 LEDs, where 2 LEDs each have been mapped to a specific audio band.
@@ -90,7 +197,7 @@ I'm thinking of using the potentiometer as a physical interface for controlling 
 The communication process b/w both the hardware and software interfaces would be handled by a *serial connection*. To enable this, I'd be making use of the *p5.webSerial* library. Additionally, as my project revolves around using FFTs, I'd also be utilizing the *p5.Sound* library.
 
 <p align = "center">
-<img src = "./CircuitDiagram_Initial.JPG">
+<img src = "./CircuitDiagram_M1.JPG">
 <br>
 Figure 2.1: Initial Circuit Diagram of the Project </p>
 
