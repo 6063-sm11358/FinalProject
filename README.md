@@ -16,12 +16,12 @@ Figure 4.1: Final Circuit Diagram
 <br>
 <img src = "./M3_MainCircuit_Side1.jpg">
 <br>
-Figure 4.2: Left-side view of the actual circuit
+Figure 4.2: Actual Circuit - Left-side View
 <br>
 <br>
 <img src = "./M3_MainCircuit_Side2.jpg">
 <br>
-Figure 4.3: Right-side view of the actual circuit </p>
+Figure 4.3: Actual Circuit - Right-side View </p>
 
 Subsequently, for the on-screen visualizer, I've created several concentric circles with the same color-coding as the physical LEDs to denote the bands. These bands also light up depending on the threshold values that I set up previously.
 
